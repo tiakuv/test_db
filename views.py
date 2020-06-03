@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, url_for
 from sqlalchemy.orm.attributes import flag_modified
 
 from app import app
@@ -28,11 +28,9 @@ def show_profile(id):
 
 @app.route('/request/', methods=["POST", "GET"])
 def show_request():
-
     form = RequestForm()
 
-    if request.method == 'POST' and form.validate_on_submit():
-
+    if form.validate_on_submit():
         goal = form.goal.data
         time = form.time.data
         name = form.name.data
@@ -42,45 +40,46 @@ def show_request():
         goal_name = form.goal.choices[int(goal) - 1][1]
         db.session.add(new_request)
         db.session.commit()
-
         return render_template("request_done.html",
                                goal=goal_name, time=have_time[time], name=name, phone=phone)
+
+    return render_template("request.html", form=form)
+
+
+@app.route('/booking/<int:id>/<day>/<time>/', methods=["POST", "GET"])
+def book_form(id, day, time):
+    form = BookingForm()
+
+    teacher = db.session.query(Teacher).filter(Teacher.id == id).one()
+    print(teacher.id, teacher.name)
 
     print(form.validate_on_submit())
     print(form.validate())
     print(form.is_submitted())
-    return render_template("request.html", form=form)
 
+    if form.validate_on_submit():
+        name = form.name.data
+        phone = form.phone.data
+        day = form.day.data
+        time = form.time.data
+        id = form.id.data
+        print(time, id)
 
-@app.route('/booking/<int:id>/<day>/<time>/')
-def book_form(id, day, time):
-    form = BookingForm()
-    teacher = Teacher.query.get_or_404(id)
+        teacher = db.session.query(Teacher).filter(Teacher.id == id).one()
+        teacher.schedule[day][time] = False
+        flag_modified(teacher, "schedule")
+
+        new_booking = Booking(day=day, time=time, client_id=check_client(name, phone), teacher_id=id)
+        db.session.add(new_booking)
+
+        db.session.commit()
+        print(teacher.schedule)
+
+        return render_template("booking_done.html",
+                               name=name, phone=phone,
+                               day_name=days[day], time=time)
+
     return render_template("booking.html",
                            form=form, teacher=teacher,
                            day=day, day_name=days[day], time=time)
-
-
-@app.route('/booking_done/', methods=["POST"])
-def res_book():
-    form = BookingForm()
-    name = form.name.data
-    phone = form.phone.data
-    day = form.day.data
-    time = form.time.data
-    id = form.id.data
-    print(time, id)
-
-    teacher = db.session.query(Teacher).filter(Teacher.id == id).one()
-    teacher.schedule[day][time] = False
-    flag_modified(teacher, "schedule")
-
-    new_booking = Booking(day=day, time=time, client_id=check_client(name, phone), teacher_id=id)
-    db.session.add(new_booking)
-
-    db.session.commit()
-    print(teacher.schedule)
-
-    return render_template("booking_done.html",
-                           name=name, phone=phone,
-                           day_name=days[day], time=time)
+    #return redirect(url_for('book_form', id=id, day=day, time=time))

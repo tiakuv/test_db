@@ -5,7 +5,7 @@
 
     <div class="row mt-5">
       <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
-        <form action="/booking_done/" class="card mb-3" method="POST">
+        <form action="/booking/" class="card mb-3" method="POST">
           <div class="card-body text-center pt-5">
             <img src="{{ teacher.picture }}" class="mb-3" width="95" alt="">
             <h2 class="h5 card-title mt-2 mb-2">{{ teacher.name }}</h2>
@@ -17,11 +17,12 @@
           {{ form.day(value=day) }}
           {{ form.time(value=time) }}
           {{ form.id(value=teacher.id) }}
-          <label class="mb-1 mt-2">{{ form.name.label }}</label>
+
+          {{ form.name.label(class="mb-1 mt-2") }}
           {{ form.name(class="form-control") }}
-          <label class="mb-1 mt-2">{{ form.phone.label }}</label>
-          {{ form.phone(class="form-control") }}
-          <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
+          {{ form.phone.label(class="mb-1 mt-2") }}
+          {{ form.phone(class="form-control", placeholder="89110001122") }}
+          {{ form.submit(class="btn btn-primary mt-4 mb-2") }}
         </div>
         </form>
       </div>
