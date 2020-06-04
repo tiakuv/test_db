@@ -13,8 +13,10 @@ days = {"mon": "Понедельник",
         "sat": "Суббота",
         "sun": "Воскресенье"}
 
+
 def get_goals():
     return db.session.query(Goal).all()
+
 
 def check_client(phone, name):
     existing_client = Client.query.filter(Client.phone == phone).first()

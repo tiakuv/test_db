@@ -9,7 +9,6 @@ goals_teachers = db.Table('goals_teachers', db.metadata,
                           )
 
 
-
 class Teacher(db.Model):
     __tablename__ = "teachers"
     id = db.Column(db.Integer, primary_key=True)
@@ -24,7 +23,6 @@ class Teacher(db.Model):
     booking = db.relationship('Booking', back_populates="teacher")
 
 
-
 class Goal(db.Model):
     __tablename__ = "goals"
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +31,7 @@ class Goal(db.Model):
 
     teachers = db.relationship('Teacher', secondary=goals_teachers, back_populates="goals")
     request = db.relationship('Request')  # у одной цели м.б. много заявок
+
 
 class Client(db.Model):
     __tablename__ = "clients"
@@ -54,7 +53,6 @@ class Request(db.Model):
 
     goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'))
     goal = db.relationship('Goal')
-
 
 
 class Booking(db.Model):
