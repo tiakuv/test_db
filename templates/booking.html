@@ -1,11 +1,11 @@
-  
 {% extends 'base.html' %}
 
     {% block container %}
 
     <div class="row mt-5">
       <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
-        <form action="/booking/" class="card mb-3" method="POST">
+        <form action="/booking/{{ teacher.id }}/{{ day }}/{{ time }}/" class="card mb-3" method="POST">
+          {{ form.csrf_token() }}
           <div class="card-body text-center pt-5">
             <img src="{{ teacher.picture }}" class="mb-3" width="95" alt="">
             <h2 class="h5 card-title mt-2 mb-2">{{ teacher.name }}</h2>
@@ -22,6 +22,11 @@
           {{ form.name(class="form-control") }}
           {{ form.phone.label(class="mb-1 mt-2") }}
           {{ form.phone(class="form-control", placeholder="89110001122") }}
+
+          {% for err in form.phone.errors %}
+            <p></p><p class="alert-warning">{{ err }}</p>
+          {% endfor %}
+
           {{ form.submit(class="btn btn-primary mt-4 mb-2") }}
         </div>
         </form>

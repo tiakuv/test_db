@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, url_for
+from flask import render_template
 from sqlalchemy.orm.attributes import flag_modified
 
 from app import app
@@ -46,16 +46,11 @@ def show_request():
     return render_template("request.html", form=form)
 
 
-@app.route('/booking/<int:id>/<day>/<time>/', methods=["POST", "GET"])
+@app.route('/booking/<id>/<day>/<time>/', methods=["POST", "GET"])
 def book_form(id, day, time):
     form = BookingForm()
 
-    teacher = db.session.query(Teacher).filter(Teacher.id == id).one()
-    print(teacher.id, teacher.name)
-
-    print(form.validate_on_submit())
-    print(form.validate())
-    print(form.is_submitted())
+    teacher = db.session.query(Teacher).filter(Teacher.id == int(id)).one()
 
     if form.validate_on_submit():
         name = form.name.data
@@ -65,7 +60,7 @@ def book_form(id, day, time):
         id = form.id.data
         print(time, id)
 
-        teacher = db.session.query(Teacher).filter(Teacher.id == id).one()
+        teacher = db.session.query(Teacher).filter(Teacher.id == int(id)).one()
         teacher.schedule[day][time] = False
         flag_modified(teacher, "schedule")
 
@@ -82,4 +77,3 @@ def book_form(id, day, time):
     return render_template("booking.html",
                            form=form, teacher=teacher,
                            day=day, day_name=days[day], time=time)
-    #return redirect(url_for('book_form', id=id, day=day, time=time))

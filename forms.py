@@ -26,4 +26,4 @@ class BookingForm(FlaskForm):
     id = HiddenField()
     name = StringField('Вас зовут', [InputRequired()])
     phone = StringField('Ваш телефон', [InputRequired(), check])
-    submit = SubmitField("Найдите мне преподавателя")
+    submit = SubmitField("Забронировать время")
