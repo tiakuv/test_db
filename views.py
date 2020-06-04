@@ -58,17 +58,13 @@ def book_form(id, day, time):
         day = form.day.data
         time = form.time.data
         id = form.id.data
-        print(time, id)
 
         teacher = db.session.query(Teacher).filter(Teacher.id == int(id)).one()
         teacher.schedule[day][time] = False
         flag_modified(teacher, "schedule")
-
         new_booking = Booking(day=day, time=time, client_id=check_client(name, phone), teacher_id=id)
         db.session.add(new_booking)
-
         db.session.commit()
-        print(teacher.schedule)
 
         return render_template("booking_done.html",
                                name=name, phone=phone,
